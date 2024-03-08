@@ -24,6 +24,7 @@ class Matrix {
         ~Matrix();
 
         void set(unsigned line_set, unsigned column_set, K value);
+        K get(unsigned line_set, unsigned column_set);
 
         void add(Matrix matrix);
         void subtract(Matrix matrix);
@@ -36,7 +37,7 @@ class Matrix {
         bool is_square();
         bool is_vector();
 
-        void print();
+        virtual void print();
 
         void matrix_to_vector();
         void vector_to_matrix();
@@ -45,6 +46,28 @@ class Matrix {
         Matrix<K> operator-(Matrix<K>& matrix);
         Matrix<K> operator*(Matrix<K>& matrix);
 };
+
+template<class K>
+std::ostream &operator<<(std::ostream &output, Matrix<K> &input) {
+    output << "is a square : " << input.is_square() << std::endl;
+    output << "is a vector : " << input.is_vector() << std::endl;
+    for (int line_print = 0; line_print < input.get_line(); ++line_print) {
+        output << "[";
+        for (int column_print = 0; column_print < input.get_column(); ++column_print) {
+            if (column_print < input.get_column() - 1) {
+                output << std::setw(10) << (input.get(line_print + 1, column_print + 1)) << ", ";
+            } else {
+                output << std::setw(10) << (input.get(line_print + 1, column_print + 1));
+            }
+        }
+        output << "]" << std::endl;
+    }
+    if (input.get_line() == 0 && input.get_column() == 0) {
+        output << "empty matrix" << std::endl;
+    }
+    output << std::endl;
+    return output;
+}
 
 template<class K>
 Matrix<K>::Matrix() : line(0), column(0), vector(false) {
@@ -158,7 +181,17 @@ void Matrix<K>::set(unsigned line_set, unsigned column_set, K value) {
     if (line_set <= this->line && column_set <= this->column) {
         this->data[line_set - 1][column_set - 1] = value;
     } else {
-        std::cerr << "error while setting the data at " << line_set << " " << column_set << std::endl;
+        std::cout << "error while setting the data at " << line_set << " " << column_set << std::endl;
+    }
+}
+
+template<class K>
+K Matrix<K>::get(unsigned line_set, unsigned column_set) {
+    if (line_set <= this->line && column_set <= this->column) {
+        return this->data[line_set - 1][column_set - 1];
+    } else {
+        std::cout << "error while getting the data at " << line_set << " " << column_set << std::endl;
+        return K();
     }
 }
 
@@ -171,7 +204,10 @@ void Matrix<K>::add(Matrix matrix) {
             }
         }
     } else {
-        std::cerr << "incompatible matrix" << std::endl;
+        std::cout << "incompatible matrix" << std::endl;
+        std::cout << matrix;
+        std::cout << "and" << std::endl;
+        std::cout << *this;
     }
 }
 
@@ -184,7 +220,10 @@ void Matrix<K>::subtract(Matrix matrix) {
             }
         }
     } else {
-        std::cerr << "incompatible matrix" << std::endl;
+        std::cout << "incompatible matrix" << std::endl;
+        std::cout << matrix;
+        std::cout << "and" << std::endl;
+        std::cout << *this;
     }
 }
 
@@ -204,7 +243,10 @@ Matrix<K> Matrix<K>::multiply(Matrix matrix) {
         }
         return result;
     } else {
-        std::cerr << "incompatible matrix" << std::endl;
+        std::cout << "incompatible matrix" << std::endl;
+        std::cout << matrix;
+        std::cout << "and" << std::endl;
+        std::cout << *this;
         Matrix<K> result;
         return result;
     }
@@ -243,20 +285,7 @@ bool Matrix<K>::is_vector() {
 
 template<class K>
 void Matrix<K>::print() {
-    std::cout << "is a square : " << this->is_square() << std::endl;
-    std::cout << "is a vector : " << this->is_vector() << std::endl;
-    for (int line_print = 0; line_print < line; ++line_print) {
-        std::cout << "[";
-        for (int column_print = 0; column_print < column; ++column_print) {
-            if (column_print < column - 1) {
-                std::cout << std::setw(10) << (this->data[line_print][column_print]) << ", ";
-            } else {
-                std::cout << std::setw(10) << (this->data[line_print][column_print]);
-            }
-        }
-        std::cout << "]" << std::endl;
-    }
-    std::cout << std::endl;
+    std::cout << *this;
 }
 
 template<class K>
@@ -285,33 +314,21 @@ void Matrix<K>::vector_to_matrix() {
 template<class K>
 Matrix<K> Matrix<K>::operator+(Matrix<K> &matrix) {
     Matrix<K> result(*this);
-    if (this->line == matrix.line && this->column == matrix.column) {
-        result.add(matrix);
-    } else {
-        std::cerr << "failed to add the two matrix" << std::endl;
-    }
+    result.add(matrix);
     return result;
 }
 
 template<class K>
 Matrix<K> Matrix<K>::operator-(Matrix<K> &matrix) {
     Matrix<K> result(*this);
-    if (this->line == matrix.line && this->column == matrix.column) {
-        result.subtract(matrix);
-    } else {
-        std::cerr << "failed to subtract the two matrix" << std::endl;
-    }
+    result.subtract(matrix);
     return result;
 }
 
 template<class K>
 Matrix<K> Matrix<K>::operator*(Matrix<K> &matrix) {
     Matrix<K> result(*this);
-    if (this->line == matrix.column && this->column == matrix.line) {
-        result.multiply(matrix);
-    } else {
-        std::cerr << "failed to multiply the two matrix" << std::endl;
-    }
+    result.multiply(matrix);
     return result;
 }
 
@@ -330,11 +347,35 @@ class Vector : public Matrix<K> {
 
         ~Vector() = default;
 
-        K dotProduct(Vector<K>& vector);
+        K dotProduct(Vector<K> &vector);
+
+        virtual void print();
 
         Vector<K> operator+(Vector<K>& vector);
         Vector<K> operator-(Vector<K>& vector);
 };
+
+template<class K>
+std::ostream &operator<<(std::ostream &output, Vector<K> &input) {
+    output << "is a square : " << input.is_square() << std::endl;
+    output << "is a vector : " << input.is_vector() << std::endl;
+    for (int line_print = 0; line_print < input.get_line(); ++line_print) {
+        output << "[";
+        for (int column_print = 0; column_print < input.get_column(); ++column_print) {
+            if (column_print < input.get_column() - 1) {
+                output << std::setw(10) << (input.get(line_print + 1, column_print + 1)) << ", ";
+            } else {
+                output << std::setw(10) << (input.get(line_print + 1, column_print + 1));
+            }
+        }
+        output << "]" << std::endl;
+    }
+    if (input.get_line() == 0) {
+        output << "empty matrix" << std::endl;
+    }
+    output << std::endl;
+    return output;
+}
 
 template<class K>
 Vector<K>::Vector() : Matrix<K>(){
@@ -438,7 +479,11 @@ Vector<K> &Vector<K>::operator=(Vector &&copy) noexcept {
 template<class K>
 K Vector<K>::dotProduct(Vector<K>& vector) {
     if (vector.line != this->line) {
-        throw std::invalid_argument("Vectors are not the same size.");
+        std::cout << "incompatible vector" << std::endl;
+        std::cout << vector;
+        std::cout << "and" << std::endl;
+        std::cout << *this;
+        return K();
     }
 
     K result = 0;
@@ -450,24 +495,21 @@ K Vector<K>::dotProduct(Vector<K>& vector) {
 }
 
 template<class K>
+void Vector<K>::print() {
+    std::cout << *this;
+}
+
+template<class K>
 Vector<K> Vector<K>::operator+(Vector<K> &vector) {
     Vector<K> result(*this);
-    if (this->line == vector.line && this->column == vector.column) {
-        result.add(vector);
-    } else {
-        std::cerr << "failed to add the two vector" << std::endl;
-    }
+    result.add(vector);
     return result;
 }
 
 template<class K>
 Vector<K> Vector<K>::operator-(Vector<K> &vector) {
     Vector<K> result(*this);
-    if (this->line == vector.line && this->column == vector.column) {
-        result.subtract(vector);
-    } else {
-        std::cerr << "failed to subtract the two vector" << std::endl;
-    }
+    result.subtract(vector);
     return result;
 }
 

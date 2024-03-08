@@ -20,7 +20,22 @@ auto main() -> int {
     Vector<int> vector_e(5, {1, 2, 3, 4, 5});
 
     vector_e.scale(3);
+
     vector_e.print();
+
+    Vector<int> vector_f(6, {1, 2, 3, 4, 5});
+
+    vector_result = vector_e - vector_f;
+
+    vector_result.print();
+
+    vector_result = vector_e + vector_f;
+
+    vector_result.print();
+
+    vector_f = Vector<int>();
+
+    vector_f.print();
 
     // matrix time
 
@@ -43,5 +58,20 @@ auto main() -> int {
     Matrix<int> matrix_e(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
 
     matrix_e.scale(3);
+
     matrix_e.print();
+
+    Matrix<int> matrix_f(4, 4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+
+    matrix_result = matrix_e - matrix_f;
+
+    matrix_result.print();
+
+    matrix_result = matrix_e + matrix_f;
+
+    matrix_result.print();
+
+    matrix_f = Matrix<int>();
+
+    matrix_f.print();
 }

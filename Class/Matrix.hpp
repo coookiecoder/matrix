@@ -2,6 +2,6 @@
 #define EX01_MATRIX_HPP
 
 template <class K>
-K linear_combination()
+K linear_combination();
 
 #endif //EX01_MATRIX_HPP
