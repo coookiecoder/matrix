@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 
 template<class K>
 class Matrix {
@@ -24,15 +25,15 @@ class Matrix {
         ~Matrix();
 
         void set(unsigned line_set, unsigned column_set, K value);
-        K get(unsigned line_get, unsigned column_get);
+        K get(unsigned line_get, unsigned column_get) const;
 
         void add(Matrix matrix);
         void subtract(Matrix matrix);
         virtual Matrix<K> multiply(Matrix matrix);
         void scale(K scale);
 
-        unsigned get_line();
-        unsigned get_column();
+        unsigned get_line() const;
+        unsigned get_column() const;
 
         bool is_square();
         bool is_vector();
@@ -186,7 +187,7 @@ void Matrix<K>::set(unsigned line_set, unsigned column_set, K value) {
 }
 
 template<class K>
-K Matrix<K>::get(unsigned line_get, unsigned column_get) {
+K Matrix<K>::get(unsigned line_get, unsigned column_get) const {
     if (line_get <= this->line && column_get <= this->column && line_get && column_get) {
         return this->data[line_get - 1][column_get - 1];
     } else {
@@ -262,12 +263,12 @@ void Matrix<K>::scale(K scale) {
 }
 
 template<class K>
-unsigned Matrix<K>::get_line() {
+unsigned Matrix<K>::get_line() const {
     return this->line;
 }
 
 template<class K>
-unsigned Matrix<K>::get_column() {
+unsigned Matrix<K>::get_column() const {
     return this->column;
 }
 
@@ -469,8 +470,8 @@ Vector<K> &Vector<K>::operator=(const Vector &copy) {
         this->data = new K *[copy.line];
 
         for (int line_copy = 0; line_copy < copy.line; ++line_copy) {
-            this->data[copy.line] = new K[copy.column];
-            this ->data[line_copy][0] = copy.data[line_copy][0];
+            this->data[line_copy] = new K[copy.column];
+            this->data[line_copy][0] = copy.data[line_copy][0];
         }
     }
     return *this;
@@ -540,6 +541,32 @@ template <class K>
 Vector<K> subtract(Vector<K> vector_a, Vector<K> vector_b) {
     Vector<K> result(vector_a);
     result.subtract(vector_b);
+    return result;
+}
+
+template<class K>
+Vector<K> linear_combination(const std::initializer_list<Vector<K>> &vector_list, const std::initializer_list<K> &scale) {
+    auto scale_iterator = scale.begin();
+    auto vector_iterator = vector_list.begin();
+    Vector<K> result(vector_iterator->get_line());
+    K result_buffer = K();
+    unsigned old = vector_iterator->get_line();
+
+    if (vector_list.size() != scale.size())
+        return Vector<K>(0);
+    for (int scale_cursor = 0; scale_cursor < scale.size(); scale_cursor++) {
+        if ((vector_iterator + scale_cursor)->get_line() != old) {
+            std::cout << "incompatible vector" << std::endl;
+            return Vector<K>(0);
+        }
+    }
+    for (int scale_cursor = 0; scale_cursor < vector_iterator->get_line(); scale_cursor++) {
+        for (int vector_cursor = 0; vector_cursor < scale.size(); vector_cursor++) {
+            result_buffer = std::fma((vector_iterator + vector_cursor)->get(scale_cursor + 1, 1), *(scale_iterator + vector_cursor), result_buffer);
+        }
+        result.set(scale_cursor + 1, 1, result_buffer);
+        result_buffer = K();
+    }
     return result;
 }
 
