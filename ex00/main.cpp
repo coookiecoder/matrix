@@ -1,77 +1,181 @@
 #include <Matrix.tpp>
 
+#define VECTOR 1
+#define MATRIX 1
+#define CONVERSION 1
+
 auto main() -> int {
-    Vector<int> vector_result;
+    if (VECTOR) {
+        Vector<int> vector_result;
 
-    Vector<int> vector_a(5, {1, 2, 3, 4, 5});
-    Vector<int> vector_b(5, {1, 2, 3, 4, 5});
+        std::cout << "Vector A && B, add" << std::endl << std::endl;
 
-    vector_result = vector_a + vector_b;
+        Vector<int> vector_a(5, {1, 2, 3, 4, 5});
+        Vector<int> vector_b(5, {1, 2, 3, 4, 5});
 
-    vector_result.print();
+        vector_result = vector_a + vector_b;
 
-    Vector<int> vector_c(5, {1, 2, 3, 4, 5});
-    Vector<int> vector_d(5, {1, 2, 3, 4, 5});
+        vector_result.print();
 
-    vector_result = vector_c - vector_d;
+        vector_result = add(vector_a, vector_b);
 
-    vector_result.print();
+        vector_result.print();
 
-    Vector<int> vector_e(5, {1, 2, 3, 4, 5});
+        vector_a.add(vector_b);
 
-    vector_e.scale(3);
+        vector_a.print();
 
-    vector_e.print();
+        vector_b.add(vector_a);
 
-    Vector<int> vector_f(6, {1, 2, 3, 4, 5});
+        vector_b.print();
 
-    vector_result = vector_e - vector_f;
+        std::cout << "Vector C && D, subtract" << std::endl << std::endl;
 
-    vector_result.print();
+        Vector<int> vector_c(5, {1, 2, 3, 4, 5});
+        Vector<int> vector_d(5, {1, 2, 3, 4, 5});
 
-    vector_result = vector_e + vector_f;
+        vector_result = vector_c - vector_d;
 
-    vector_result.print();
+        vector_result.print();
 
-    vector_f = Vector<int>();
+        vector_result = subtract(vector_c, vector_d);
 
-    vector_f.print();
+        vector_result.print();
 
-    // matrix time
+        vector_c.subtract(vector_d);
 
-    Matrix<int> matrix_result;
+        vector_c.print();
 
-    Matrix<int> matrix_a(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
-    Matrix<int> matrix_b(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
+        vector_d.subtract(vector_c);
 
-    matrix_result = matrix_a + matrix_b;
+        vector_d.print();
 
-    matrix_result.print();
+        std::cout << "Vector E, scale && dot product" << std::endl << std::endl;
 
-    Matrix<int> matrix_c(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
-    Matrix<int> matrix_d(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
+        Vector<int> vector_e(5, {1, 2, 3, 4, 5});
 
-    matrix_result = matrix_c - matrix_d;
+        vector_e.scale(3);
 
-    matrix_result.print();
+        vector_e.print();
 
-    Matrix<int> matrix_e(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
+        std::cout << vector_e.dotProduct(vector_e) << std::endl << std::endl;
 
-    matrix_e.scale(3);
+        std::cout << "Vector F, error" << std::endl << std::endl;
 
-    matrix_e.print();
+        Vector<int> vector_f(6, {1, 2, 3, 4, 5});
 
-    Matrix<int> matrix_f(4, 4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+        vector_result = vector_e - vector_f;
 
-    matrix_result = matrix_e - matrix_f;
+        vector_result.print();
 
-    matrix_result.print();
+        vector_result = vector_e + vector_f;
 
-    matrix_result = matrix_e + matrix_f;
+        vector_result.print();
 
-    matrix_result.print();
+        vector_f = Vector<int>();
 
-    matrix_f = Matrix<int>();
+        vector_f.print();
+    }
 
-    matrix_f.print();
+    if (MATRIX) {
+        std::cout << "Matrix time" << std::endl << std::endl;
+
+        Matrix<int> matrix_result;
+
+        std::cout << "Matrix A && B, add" << std::endl << std::endl;
+
+        Matrix<int> matrix_a(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
+        Matrix<int> matrix_b(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
+
+        matrix_result = matrix_a + matrix_b;
+
+        matrix_result.print();
+
+        matrix_result = add(matrix_a, matrix_b);
+
+        matrix_result.print();
+
+        std::cout << "Matrix C && D, subtract" << std::endl << std::endl;
+
+        Matrix<int> matrix_c(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
+        Matrix<int> matrix_d(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
+
+        matrix_result = matrix_c - matrix_d;
+
+        matrix_result.print();
+
+        matrix_result = subtract(matrix_c, matrix_d);
+
+        matrix_result.print();
+
+        std::cout << "Matrix E, scale" << std::endl << std::endl;
+
+        Matrix<int> matrix_e(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
+
+        matrix_e.scale(3);
+
+        matrix_e.print();
+
+        std::cout << "Matrix F, error" << std::endl << std::endl;
+
+        Matrix<int> matrix_f(4, 4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+
+        matrix_result = matrix_e - matrix_f;
+
+        matrix_result.print();
+
+        matrix_result = matrix_e + matrix_f;
+
+        matrix_result.print();
+
+        matrix_f = Matrix<int>();
+
+        matrix_f.print();
+    }
+
+    if (CONVERSION) {
+        std::cout << "Conversion time" << std::endl << std::endl;
+
+        Matrix<int> matrix_g(4, 4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+
+        std::cout << "Matrix G" << std::endl << std::endl;
+
+        matrix_g.print();
+
+        matrix_g.matrix_to_vector();
+
+        matrix_g.print();
+
+        matrix_g.vector_to_matrix();
+
+        matrix_g.print();
+
+        Vector<int> vector_g(4, {1, 2, 3, 4});
+
+        std::cout << "Vector G" << std::endl << std::endl;
+
+        vector_g.print();
+
+        vector_g.vector_to_matrix();
+
+        vector_g.print();
+
+        vector_g.matrix_to_vector();
+
+        vector_g.print();
+
+        std::cout << "Matrix && Vector H && I" << std::endl << std::endl;
+
+        Vector<int> vector_h(matrix_g);
+        Matrix<int> matrix_h(vector_g);
+
+        vector_h.print();
+        matrix_h.print();
+
+        Vector<int> vector_i(10);
+        Matrix<int> matrix_i(10, 10);
+
+        vector_i.print();
+        matrix_i.print();
+    }
 }

@@ -24,7 +24,7 @@ class Matrix {
         ~Matrix();
 
         void set(unsigned line_set, unsigned column_set, K value);
-        K get(unsigned line_set, unsigned column_set);
+        K get(unsigned line_get, unsigned column_get);
 
         void add(Matrix matrix);
         void subtract(Matrix matrix);
@@ -178,7 +178,7 @@ Matrix<K>::~Matrix() {
 
 template<class K>
 void Matrix<K>::set(unsigned line_set, unsigned column_set, K value) {
-    if (line_set <= this->line && column_set <= this->column) {
+    if (line_set <= this->line && column_set <= this->column && line_set && column_set) {
         this->data[line_set - 1][column_set - 1] = value;
     } else {
         std::cout << "error while setting the data at " << line_set << " " << column_set << std::endl;
@@ -186,11 +186,11 @@ void Matrix<K>::set(unsigned line_set, unsigned column_set, K value) {
 }
 
 template<class K>
-K Matrix<K>::get(unsigned line_set, unsigned column_set) {
-    if (line_set <= this->line && column_set <= this->column) {
-        return this->data[line_set - 1][column_set - 1];
+K Matrix<K>::get(unsigned line_get, unsigned column_get) {
+    if (line_get <= this->line && column_get <= this->column && line_get && column_get) {
+        return this->data[line_get - 1][column_get - 1];
     } else {
-        std::cout << "error while getting the data at " << line_set << " " << column_set << std::endl;
+        std::cout << "error while getting the data at " << line_get << " " << column_get << std::endl;
         return K();
     }
 }
@@ -234,7 +234,7 @@ Matrix<K> Matrix<K>::multiply(Matrix matrix) {
 
         for (int line_multiply= 0; line_multiply < result.line; ++line_multiply) {
             for (int column_multiply = 0; column_multiply < result.column; ++column_multiply) {
-                K buffer;
+                K buffer = K();
                 for (int cursor = 0; cursor < this->column; ++cursor) {
                     buffer += this->data[line_multiply][cursor] * matrix.data[cursor][column_multiply];
                 }
@@ -290,7 +290,7 @@ void Matrix<K>::print() {
 
 template<class K>
 void Matrix<K>::matrix_to_vector() {
-    K **data_vector = new K[this->line];
+    K **data_vector = new K*[this->line];
 
     for (int line_copy = 0; line_copy < this->line; ++line_copy) {
         data_vector[line_copy] = new K[1];
@@ -303,6 +303,8 @@ void Matrix<K>::matrix_to_vector() {
 
     delete [] data;
 
+    this->column = 1;
+    this->vector = true;
     this->data = data_vector;
 }
 
@@ -329,6 +331,20 @@ template<class K>
 Matrix<K> Matrix<K>::operator*(Matrix<K> &matrix) {
     Matrix<K> result(*this);
     result.multiply(matrix);
+    return result;
+}
+
+template <class K>
+Matrix<K> add(Matrix<K> matrix_a, Matrix<K> matrix_b) {
+    Matrix<K> result(matrix_a);
+    result.add(matrix_b);
+    return result;
+}
+
+template <class K>
+Matrix<K> subtract(Matrix<K> matrix_a, Matrix<K> matrix_b) {
+    Matrix<K> result(matrix_a);
+    result.subtract(matrix_b);
     return result;
 }
 
@@ -384,15 +400,15 @@ Vector<K>::Vector() : Matrix<K>(){
 
 template<class K>
 Vector<K>::Vector(Matrix<K> matrix) {
-    if (matrix.column > 0) {
-        this->line = matrix.line;
+    if (matrix.get_column() > 0) {
+        this->line = matrix.get_line();
         this->column = 1;
         this->vector = true;
         this->data = new K*[this->line];
 
         for (int line_set = 0; line_set < this->line; ++line_set) {
             this->data[line_set] = new K[1];
-            this->data[line_set][0] = matrix.data[line_set][0];
+            this->data[line_set][1] = matrix.get(line_set + 1, 1);
         }
     } else {
         this->line = 0;
@@ -510,6 +526,20 @@ template<class K>
 Vector<K> Vector<K>::operator-(Vector<K> &vector) {
     Vector<K> result(*this);
     result.subtract(vector);
+    return result;
+}
+
+template <class K>
+Vector<K> add(Vector<K> vector_a, Vector<K> vector_b) {
+    Vector<K> result(vector_a);
+    result.add(vector_b);
+    return result;
+}
+
+template <class K>
+Vector<K> subtract(Vector<K> vector_a, Vector<K> vector_b) {
+    Vector<K> result(vector_a);
+    result.subtract(vector_b);
     return result;
 }
 
