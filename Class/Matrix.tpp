@@ -1,5 +1,5 @@
-#ifndef MATRIX_MATRIX_HPP
-#define MATRIX_MATRIX_HPP
+#ifndef MATRIX_MATRIX_TPP
+#define MATRIX_MATRIX_TPP
 
 #include <iostream>
 #include <iomanip>
