@@ -16,40 +16,41 @@ class Matrix {
         Matrix();
         Matrix(unsigned line, unsigned column);
         Matrix(unsigned line, unsigned column, const std::initializer_list<K> &value);
-        Matrix(Matrix &copy);
+        Matrix(Matrix const &copy);
         Matrix(Matrix &&copy) noexcept;
 
         Matrix& operator=(const Matrix &copy);
         Matrix& operator=(Matrix &&copy) noexcept;
 
-        ~Matrix();
+        virtual ~Matrix();
 
         void set(unsigned line_set, unsigned column_set, K value);
         K get(unsigned line_get, unsigned column_get) const;
 
-        void add(Matrix matrix);
-        void subtract(Matrix matrix);
-        virtual Matrix<K> multiply(Matrix matrix);
+        void add(Matrix<K> matrix);
+        void subtract(Matrix<K> matrix);
+        virtual Matrix<K> multiply(Matrix<K> matrix);
         void scale(K scale);
 
-        unsigned get_line() const;
-        unsigned get_column() const;
+        [[nodiscard]] unsigned get_line() const;
+        [[nodiscard]] unsigned get_column() const;
 
-        bool is_square();
-        bool is_vector();
+        [[nodiscard]] bool is_square() const;
+        [[nodiscard]] bool is_vector() const;
 
         virtual void print();
 
         void matrix_to_vector();
         void vector_to_matrix();
 
-        Matrix<K> operator+(Matrix<K>& matrix);
-        Matrix<K> operator-(Matrix<K>& matrix);
-        Matrix<K> operator*(Matrix<K>& matrix);
+        Matrix<K> operator+(Matrix<K> const &matrix);
+        Matrix<K> operator-(Matrix<K> const &matrix);
+        Matrix<K> operator*(Matrix<K> const &matrix);
+        Matrix<K> operator*(K scale);
 };
 
 template<class K>
-std::ostream &operator<<(std::ostream &output, Matrix<K> &input) {
+std::ostream &operator<<(std::ostream &output, Matrix<K> const &input) {
     output << "is a square : " << input.is_square() << std::endl;
     output << "is a vector : " << input.is_vector() << std::endl;
     for (int line_print = 0; line_print < input.get_line(); ++line_print) {
@@ -112,7 +113,7 @@ Matrix<K>::Matrix(unsigned line, unsigned column, const std::initializer_list<K>
 }
 
 template<class K>
-Matrix<K>::Matrix(Matrix &copy) : line(copy.line), column(copy.column), vector(copy.vector) {
+Matrix<K>::Matrix(Matrix const &copy) : line(copy.line), column(copy.column), vector(copy.vector) {
     this->data = new K*[copy.line];
 
     for (int line_set = 0; line_set < copy.line; ++line_set) {
@@ -128,7 +129,12 @@ Matrix<K>::Matrix(Matrix &copy) : line(copy.line), column(copy.column), vector(c
 
 template<class K>
 Matrix<K>::Matrix(Matrix &&copy) noexcept : line(copy.line), column(copy.column), vector(copy.vector) {
+    this->data = copy.data;
 
+    copy.line = 0;
+    copy.column = 0;
+    copy.vector = false;
+    copy.data = nullptr;
 }
 
 template<class K>
@@ -197,7 +203,7 @@ K Matrix<K>::get(unsigned line_get, unsigned column_get) const {
 }
 
 template<class K>
-void Matrix<K>::add(Matrix matrix) {
+void Matrix<K>::add(Matrix<K> const matrix) {
     if (matrix.line == this->line && matrix.column == this->column) {
         for (int line_add = 0; line_add < line; ++line_add) {
             for (int column_add = 0; column_add < column; ++column_add) {
@@ -213,7 +219,7 @@ void Matrix<K>::add(Matrix matrix) {
 }
 
 template<class K>
-void Matrix<K>::subtract(Matrix matrix) {
+void Matrix<K>::subtract(Matrix const matrix) {
     if (matrix.line == this->line && matrix.column == this->column) {
         for (int line_subtract = 0; line_subtract < line; ++line_subtract) {
             for (int column_subtract = 0; column_subtract < column; ++column_subtract) {
@@ -229,7 +235,7 @@ void Matrix<K>::subtract(Matrix matrix) {
 }
 
 template<class K>
-Matrix<K> Matrix<K>::multiply(Matrix matrix) {
+Matrix<K> Matrix<K>::multiply(Matrix const matrix) {
     if (this->line == matrix.column && this->column == matrix.line) {
         Matrix<K> result(this->line, matrix.column);
 
@@ -237,7 +243,7 @@ Matrix<K> Matrix<K>::multiply(Matrix matrix) {
             for (int column_multiply = 0; column_multiply < result.column; ++column_multiply) {
                 K buffer = K();
                 for (int cursor = 0; cursor < this->column; ++cursor) {
-                    buffer += this->data[line_multiply][cursor] * matrix.data[cursor][column_multiply];
+                    buffer = std::fma(this->data[line_multiply][cursor], matrix.data[cursor][column_multiply], buffer);
                 }
                 result.set(line_multiply, column_multiply, buffer);
             }
@@ -273,14 +279,14 @@ unsigned Matrix<K>::get_column() const {
 }
 
 template<class K>
-bool Matrix<K>::is_square() {
+bool Matrix<K>::is_square() const {
     if (this->line == this->column)
         return true;
     return false;
 }
 
 template<class K>
-bool Matrix<K>::is_vector() {
+bool Matrix<K>::is_vector() const {
     return this->vector;
 }
 
@@ -315,23 +321,30 @@ void Matrix<K>::vector_to_matrix() {
 }
 
 template<class K>
-Matrix<K> Matrix<K>::operator+(Matrix<K> &matrix) {
+Matrix<K> Matrix<K>::operator+(Matrix<K> const &matrix) {
     Matrix<K> result(*this);
     result.add(matrix);
     return result;
 }
 
 template<class K>
-Matrix<K> Matrix<K>::operator-(Matrix<K> &matrix) {
+Matrix<K> Matrix<K>::operator-(Matrix<K> const &matrix) {
     Matrix<K> result(*this);
     result.subtract(matrix);
     return result;
 }
 
 template<class K>
-Matrix<K> Matrix<K>::operator*(Matrix<K> &matrix) {
+Matrix<K> Matrix<K>::operator*(Matrix<K> const &matrix) {
     Matrix<K> result(*this);
     result.multiply(matrix);
+    return result;
+}
+
+template<class K>
+Matrix<K> Matrix<K>::operator*(K scale) {
+    Matrix<K> result(*this);
+    result.scale(scale);
     return result;
 }
 
@@ -362,14 +375,16 @@ class Vector : public Matrix<K> {
         Vector& operator=(const Vector &copy);
         Vector& operator=(Vector &&copy) noexcept ;
 
-        ~Vector() = default;
+        ~Vector() override = default;
 
         K dotProduct(Vector<K> &vector);
 
-        virtual void print();
+        void print() override;
 
-        Vector<K> operator+(Vector<K>& vector);
-        Vector<K> operator-(Vector<K>& vector);
+        Vector<K> operator+(Vector<K> const &vector);
+        Vector<K> operator-(Vector<K> const &vector);
+        Vector<K> operator*(Vector<K> const &vector);
+        Vector<K> operator*(K scale);
 };
 
 template<class K>
@@ -409,7 +424,7 @@ Vector<K>::Vector(Matrix<K> matrix) {
 
         for (int line_set = 0; line_set < this->line; ++line_set) {
             this->data[line_set] = new K[1];
-            this->data[line_set][1] = matrix.get(line_set + 1, 1);
+            this->data[line_set][0] = matrix.get(line_set + 1, 1);
         }
     } else {
         this->line = 0;
@@ -505,7 +520,7 @@ K Vector<K>::dotProduct(Vector<K>& vector) {
 
     K result = 0;
     for (int cursor = 0; cursor < this->line; ++cursor) {
-        result += this->data[cursor][0] * vector.data[cursor][0];
+        result = std::fma(this->data[cursor][0], vector.data[cursor][0], result);
     }
 
     return result;
@@ -517,18 +532,33 @@ void Vector<K>::print() {
 }
 
 template<class K>
-Vector<K> Vector<K>::operator+(Vector<K> &vector) {
+Vector<K> Vector<K>::operator+(Vector<K> const &vector) {
     Vector<K> result(*this);
     result.add(vector);
     return result;
 }
 
 template<class K>
-Vector<K> Vector<K>::operator-(Vector<K> &vector) {
+Vector<K> Vector<K>::operator-(Vector<K> const &vector) {
     Vector<K> result(*this);
     result.subtract(vector);
     return result;
 }
+
+template<class K>
+Vector<K> Vector<K>::operator*(Vector<K> const &vector) {
+    Vector<K> result(*this);
+    result.multiply(vector);
+    return result;
+}
+
+template<class K>
+Vector<K> Vector<K>::operator*(K scale) {
+    Vector<K> result(*this);
+    result.scale(scale);
+    return result;
+}
+
 
 template <class K>
 Vector<K> add(Vector<K> vector_a, Vector<K> vector_b) {
@@ -548,18 +578,22 @@ template<class K>
 Vector<K> linear_combination(const std::initializer_list<Vector<K>> &vector_list, const std::initializer_list<K> &scale) {
     auto scale_iterator = scale.begin();
     auto vector_iterator = vector_list.begin();
+
     Vector<K> result(vector_iterator->get_line());
     K result_buffer = K();
+
     unsigned old = vector_iterator->get_line();
 
     if (vector_list.size() != scale.size())
         return Vector<K>(0);
+
     for (int scale_cursor = 0; scale_cursor < scale.size(); scale_cursor++) {
         if ((vector_iterator + scale_cursor)->get_line() != old) {
             std::cout << "incompatible vector" << std::endl;
             return Vector<K>(0);
         }
     }
+
     for (int scale_cursor = 0; scale_cursor < vector_iterator->get_line(); scale_cursor++) {
         for (int vector_cursor = 0; vector_cursor < scale.size(); vector_cursor++) {
             result_buffer = std::fma((vector_iterator + vector_cursor)->get(scale_cursor + 1, 1), *(scale_iterator + vector_cursor), result_buffer);
@@ -568,6 +602,13 @@ Vector<K> linear_combination(const std::initializer_list<Vector<K>> &vector_list
         result_buffer = K();
     }
     return result;
+}
+
+template<class V>
+V lerp(V variable_one, V variable_two, float slider) {
+    if (slider >= 0.0f && slider <= 1.0f)
+        return variable_one * (1 - slider) + variable_two * (slider);
+    throw std::invalid_argument("invalid slider range");
 }
 
 #endif //MATRIX_MATRIX_TPP

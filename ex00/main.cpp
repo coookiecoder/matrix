@@ -1,7 +1,7 @@
 #include <Matrix.tpp>
 
 auto main(int argc, char **argv) -> int {
-    if (argc > 1 && (argv[1] == "1" ||  argv[1] == "3")) {
+    if (argc == 2 || argc == 4) {
         Vector<int> vector_result;
 
         std::cout << "Vector A && B, add" << std::endl << std::endl;
@@ -73,7 +73,7 @@ auto main(int argc, char **argv) -> int {
         vector_f.print();
     }
 
-    if (argc > 1 && (argv[1] == "2" ||  argv[1] == "3")) {
+    if (argc == 3 || argc == 4) {
         std::cout << "Matrix time" << std::endl << std::endl;
 
         Matrix<int> matrix_result;
@@ -129,7 +129,7 @@ auto main(int argc, char **argv) -> int {
         matrix_f.print();
     }
 
-    if (argc > 1 && argv[1] == "3") {
+    if (argc == 4) {
         std::cout << "Conversion time" << std::endl << std::endl;
 
         Matrix matrix_g(4, 4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
