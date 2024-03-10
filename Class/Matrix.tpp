@@ -570,4 +570,4 @@ Vector<K> linear_combination(const std::initializer_list<Vector<K>> &vector_list
     return result;
 }
 
-#endif //MATRIX_MATRIX_HPP
+#endif //MATRIX_MATRIX_TPP
