@@ -20,3 +20,8 @@ project(ex03)
 
 add_executable(ex03 ex03/main.cpp Class/Matrix.tpp)
 include_directories(Class)
+
+project(ex04)
+
+add_executable(ex04 ex04/main.cpp Class/Matrix.tpp)
+include_directories(Class)

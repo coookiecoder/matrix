@@ -378,6 +378,9 @@ class Vector : public Matrix<K> {
         ~Vector() override = default;
 
         K dotProduct(Vector<K> &vector);
+        float norm_1();
+        float norm();
+        float norm_inf();
 
         void print() override;
 
@@ -521,6 +524,49 @@ K Vector<K>::dotProduct(Vector<K>& vector) {
     K result = 0;
     for (int cursor = 0; cursor < this->line; ++cursor) {
         result = std::fma(this->data[cursor][0], vector.data[cursor][0], result);
+    }
+
+    return result;
+}
+
+template<class K>
+float Vector<K>::norm_1() {
+    float result = 0.0f;
+
+    for (int line_norm = 0; line_norm < this->line; line_norm++) {
+        if (this->data[line_norm][0] < 0) {
+            result -= this->data[line_norm][0];
+        } else {
+            result += this->data[line_norm][0];
+        }
+    }
+
+    return result;
+}
+
+template<class K>
+float Vector<K>::norm() {
+    float result = 0.0f;
+
+    for (int line_norm = 0; line_norm < this->line; line_norm++) {
+        result += std::pow(this->data[line_norm][0], 2);
+    }
+
+    result = std::pow(result, 0.5f);
+
+    return result;
+}
+
+template<class K>
+float Vector<K>::norm_inf() {
+    float result = 0.0f;
+
+    for (int line_norm = 0; line_norm < this->line; line_norm++) {
+        if (this->data[line_norm][0] < 0) {
+            result = std::max(static_cast<float>(-this->data[line_norm][0]), result);
+        } else {
+            result = std::max(static_cast<float>(this->data[line_norm][0]), result);
+        }
     }
 
     return result;
