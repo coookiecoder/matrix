@@ -382,8 +382,6 @@ class Vector : public Matrix<K> {
         float norm();
         float norm_inf();
 
-        void print() override;
-
         Vector<K> operator+(Vector<K> const &vector);
         Vector<K> operator-(Vector<K> const &vector);
         Vector<K> operator*(Vector<K> const &vector);
@@ -549,7 +547,7 @@ float Vector<K>::norm() {
     float result = 0.0f;
 
     for (int line_norm = 0; line_norm < this->line; line_norm++) {
-        result += std::pow(this->data[line_norm][0], 2);
+        result = std::fma(this->data[line_norm][0], this->data[line_norm][0], result);
     }
 
     result = std::pow(result, 0.5f);
@@ -570,11 +568,6 @@ float Vector<K>::norm_inf() {
     }
 
     return result;
-}
-
-template<class K>
-void Vector<K>::print() {
-    std::cout << *this;
 }
 
 template<class K>
@@ -607,21 +600,21 @@ Vector<K> Vector<K>::operator*(K scale) {
 
 
 template <class K>
-Vector<K> add(Vector<K> vector_a, Vector<K> vector_b) {
+[[nodiscard]] Vector<K> add(Vector<K> vector_a, Vector<K> vector_b) {
     Vector<K> result(vector_a);
     result.add(vector_b);
     return result;
 }
 
 template <class K>
-Vector<K> subtract(Vector<K> vector_a, Vector<K> vector_b) {
+[[nodiscard]] Vector<K> subtract(Vector<K> vector_a, Vector<K> vector_b) {
     Vector<K> result(vector_a);
     result.subtract(vector_b);
     return result;
 }
 
 template<class K>
-Vector<K> linear_combination(const std::initializer_list<Vector<K>> &vector_list, const std::initializer_list<K> &scale) {
+[[nodiscard]] Vector<K> linear_combination(const std::initializer_list<Vector<K>> &vector_list, const std::initializer_list<K> &scale) {
     auto scale_iterator = scale.begin();
     auto vector_iterator = vector_list.begin();
 
@@ -651,7 +644,7 @@ Vector<K> linear_combination(const std::initializer_list<Vector<K>> &vector_list
 }
 
 template<class V>
-V lerp(V variable_one, V variable_two, float slider) {
+[[nodiscard]] V lerp(V variable_one, V variable_two, float slider) {
     if (slider >= 0.0f && slider <= 1.0f)
         return variable_one * (1 - slider) + variable_two * (slider);
     throw std::invalid_argument("invalid slider range");
