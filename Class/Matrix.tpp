@@ -25,7 +25,7 @@ class Matrix {
         virtual ~Matrix();
 
         void set(unsigned line_set, unsigned column_set, K value);
-        K get(unsigned line_get, unsigned column_get) const;
+        [[nodiscard]] K get(unsigned line_get, unsigned column_get) const;
 
         void add(Matrix<K> matrix);
         void subtract(Matrix<K> matrix);
@@ -245,7 +245,7 @@ Matrix<K> Matrix<K>::multiply(Matrix const matrix) {
                 for (int cursor = 0; cursor < this->column; ++cursor) {
                     buffer = std::fma(this->data[line_multiply][cursor], matrix.data[cursor][column_multiply], buffer);
                 }
-                result.set(line_multiply, column_multiply, buffer);
+                result.set(line_multiply + 1, column_multiply + 1, buffer);
             }
         }
         return result;
