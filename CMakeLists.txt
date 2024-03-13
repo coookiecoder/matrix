@@ -24,3 +24,7 @@ include_directories(Class)
 project(ex05)
 add_executable(ex05_matrix ex05/main.cpp Class/Matrix.tpp)
 include_directories(Class)
+
+project(ex06)
+add_executable(ex06_matrix ex06/main.cpp Class/Matrix.tpp)
+include_directories(Class)

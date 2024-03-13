@@ -657,4 +657,18 @@ template<class K>
     return 0;
 }
 
+template<class K>
+[[nodiscard]] Vector<K> cross_product(Vector<K> u, Vector<K> v) {
+    if (u.get_line() == 3 && v.get_line() == 3) {
+        Vector<K> result(3);
+
+        result.set(1, 1, (u.get(2, 1) * v.get(3, 1) - u.get(3, 1) * v.get(2, 1)));
+        result.set(2, 1, (u.get(3, 1) * v.get(1, 1) - u.get(1, 1) * v.get(3, 1)));
+        result.set(3, 1, (u.get(1, 1) * v.get(2, 1) - u.get(2, 1) * v.get(1, 1)));
+
+        return result;
+    }
+    return Vector<float>();
+}
+
 #endif //MATRIX_MATRIX_TPP
