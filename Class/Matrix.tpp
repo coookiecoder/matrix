@@ -31,6 +31,7 @@ class Matrix {
         void subtract(Matrix<K> matrix);
         virtual Matrix<K> multiply(Matrix<K> matrix);
         void scale(K scale);
+        K trace();
 
         [[nodiscard]] unsigned get_line() const;
         [[nodiscard]] unsigned get_column() const;
@@ -266,6 +267,20 @@ void Matrix<K>::scale(K scale) {
             this->data[line_scale][column_scale] *= scale;
         }
     }
+}
+
+template<class K>
+K Matrix<K>::trace() {
+    if (this->is_square()) {
+        K result = K();
+
+        for (int trace_index = 0; trace_index < this->get_line(); ++trace_index) {
+            result += this->get(trace_index + 1, trace_index + 1);
+        }
+
+        return result;
+    }
+    throw std::invalid_argument("the matrix is not sqare");
 }
 
 template<class K>
