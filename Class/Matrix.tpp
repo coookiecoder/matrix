@@ -650,4 +650,11 @@ template<class V>
     throw std::invalid_argument("invalid slider range");
 }
 
+template<class K>
+[[nodiscard]] float angle_cos(Vector<K> u, Vector<K> v) {
+    if (u.get_line() == v.get_line())
+        return u.dotProduct(v) / (u.norm() * v.norm());
+    return 0;
+}
+
 #endif //MATRIX_MATRIX_TPP
