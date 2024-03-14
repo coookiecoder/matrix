@@ -40,3 +40,19 @@ include_directories(Class)
 project(ex09)
 add_executable(ex09_matrix ex09/main.cpp Class/Matrix.tpp)
 include_directories(Class)
+
+project(ex10)
+add_executable(ex10_matrix ex10/main.cpp Class/Matrix.tpp)
+include_directories(Class)
+
+project(ex11)
+add_executable(ex11_matrix ex11/main.cpp Class/Matrix.tpp)
+include_directories(Class)
+
+project(ex12)
+add_executable(ex12_matrix ex12/main.cpp Class/Matrix.tpp)
+include_directories(Class)
+
+project(ex13)
+add_executable(ex13_matrix ex13/main.cpp Class/Matrix.tpp)
+include_directories(Class)
