@@ -27,6 +27,14 @@ class Matrix {
         void set(unsigned line_set, unsigned column_set, K value);
         [[nodiscard]] K get(unsigned line_get, unsigned column_get) const;
 
+        void add_line(Matrix<K> matrix, unsigned line);
+        void subtract_line(Matrix<K> matrix, unsigned line);
+        void multiply_line(Matrix<K> matrix, unsigned line);
+        void divide_line(Matrix<K>, unsigned line);
+
+        void multiply_line(K scale);
+        void divide_line(K scale);
+
         void add(Matrix<K> matrix);
         void subtract(Matrix<K> matrix);
         [[nodiscard]] virtual Matrix<K> multiply(Matrix<K> matrix);
@@ -202,6 +210,34 @@ K Matrix<K>::get(unsigned line_get, unsigned column_get) const {
     } else {
         std::cout << "error while getting the data at " << line_get << " " << column_get << std::endl;
         return K();
+    }
+}
+
+template<class K>
+void Matrix<K>::add_line(Matrix<K> matrix, unsigned line) {
+    for (int column_add = 1; column_add <= this->get_column(); ++column_add) {
+        this->set(line, column_add, this->get(line, column_add) + matrix.get(line, column_add));
+    }
+}
+
+template<class K>
+void Matrix<K>::subtract_line(Matrix<K> matrix, unsigned line) {
+    for (int column_add = 1; column_add <= this->get_column(); ++column_add) {
+        this->set(line, column_add, this->get(line, column_add) - matrix.get(line, column_add));
+    }
+}
+
+template<class K>
+void Matrix<K>::multiply_line(Matrix<K> matrix, unsigned line) {
+    for (int column_add = 1; column_add <= this->get_column(); ++column_add) {
+        this->set(line, column_add, this->get(line, column_add) * matrix.get(line, column_add));
+    }
+}
+
+template<class K>
+void Matrix<K>::divide_line(Matrix<K> matrix, unsigned line) {
+    for (int column_add = 1; column_add <= this->get_column(); ++column_add) {
+        this->set(line, column_add, this->get(line, column_add) / matrix.get(line, column_add));
     }
 }
 
