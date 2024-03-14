@@ -32,8 +32,10 @@ class Matrix {
         void multiply_line(Matrix<K> matrix, unsigned line);
         void divide_line(Matrix<K>, unsigned line);
 
-        void multiply_line(K scale);
-        void divide_line(K scale);
+        void add_line(K scale, unsigned line);
+        void subtract_line(K scale, unsigned line);
+        void multiply_line(K scale, unsigned line);
+        void divide_line(K scale, unsigned line);
 
         void add(Matrix<K> matrix);
         void subtract(Matrix<K> matrix);
@@ -222,22 +224,50 @@ void Matrix<K>::add_line(Matrix<K> matrix, unsigned line) {
 
 template<class K>
 void Matrix<K>::subtract_line(Matrix<K> matrix, unsigned line) {
-    for (int column_add = 1; column_add <= this->get_column(); ++column_add) {
-        this->set(line, column_add, this->get(line, column_add) - matrix.get(line, column_add));
+    for (int column_subtract = 1; column_subtract <= this->get_column(); ++column_subtract) {
+        this->set(line, column_subtract, this->get(line, column_subtract) - matrix.get(line, column_subtract));
     }
 }
 
 template<class K>
 void Matrix<K>::multiply_line(Matrix<K> matrix, unsigned line) {
-    for (int column_add = 1; column_add <= this->get_column(); ++column_add) {
-        this->set(line, column_add, this->get(line, column_add) * matrix.get(line, column_add));
+    for (int column_multiply = 1; column_multiply <= this->get_column(); ++column_multiply) {
+        this->set(line, column_multiply, this->get(line, column_multiply) * matrix.get(line, column_multiply));
     }
 }
 
 template<class K>
 void Matrix<K>::divide_line(Matrix<K> matrix, unsigned line) {
+    for (int column_divide = 1; column_divide <= this->get_column(); ++column_divide) {
+        this->set(line, column_divide, this->get(line, column_divide) / matrix.get(line, column_divide));
+    }
+}
+
+template<class K>
+void Matrix<K>::add_line(K scale, unsigned line) {
     for (int column_add = 1; column_add <= this->get_column(); ++column_add) {
-        this->set(line, column_add, this->get(line, column_add) / matrix.get(line, column_add));
+        this->set(line, column_add, this->get(line, column_add) + scale);
+    }
+}
+
+template<class K>
+void Matrix<K>::subtract_line(K scale, unsigned line) {
+    for (int column_subtract = 1; column_subtract <= this->get_column(); ++column_subtract) {
+        this->set(line, column_subtract, this->get(line, column_subtract) - scale);
+    }
+}
+
+template<class K>
+void Matrix<K>::multiply_line(K scale, unsigned line) {
+    for (int column_multiply = 1; column_multiply <= this->get_column(); ++column_multiply) {
+        this->set(line, column_multiply, this->get(line, column_multiply) * scale);
+    }
+}
+
+template<class K>
+void Matrix<K>::divide_line(K scale, unsigned line) {
+    for (int column_divide = 1; column_divide <= this->get_column(); ++column_divide) {
+        this->set(line, column_divide, this->get(line, column_divide) / scale);
     }
 }
 
