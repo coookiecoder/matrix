@@ -29,9 +29,10 @@ class Matrix {
 
         void add(Matrix<K> matrix);
         void subtract(Matrix<K> matrix);
-        virtual Matrix<K> multiply(Matrix<K> matrix);
+        [[nodiscard]] virtual Matrix<K> multiply(Matrix<K> matrix);
         void scale(K scale);
         K trace();
+        [[nodiscard]] Matrix<K> transpose();
 
         [[nodiscard]] unsigned get_line() const;
         [[nodiscard]] unsigned get_column() const;
@@ -281,6 +282,19 @@ K Matrix<K>::trace() {
         return result;
     }
     throw std::invalid_argument("the matrix is not sqare");
+}
+
+template<class K>
+Matrix<K> Matrix<K>::transpose() {
+    Matrix<K> result(this->get_column(), this->get_line());
+
+    for (int transpose_line = 1; transpose_line <= this->get_column(); ++transpose_line) {
+        for (int transpose_column = 1; transpose_column <= this->get_line(); ++transpose_column) {
+            result.set(transpose_line, transpose_column, this->get(transpose_column, transpose_line));
+        }
+    }
+
+    return result;
 }
 
 template<class K>
