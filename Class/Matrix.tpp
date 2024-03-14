@@ -37,11 +37,14 @@ class Matrix {
         void multiply_line(K scale, unsigned line);
         void divide_line(K scale, unsigned line);
 
+        void swap_line(unsigned line_one, unsigned line_two);
+
         void add(Matrix<K> matrix);
         void subtract(Matrix<K> matrix);
         [[nodiscard]] virtual Matrix<K> multiply(Matrix<K> matrix);
         void scale(K scale);
-        K trace();
+
+        [[nodiscard]] K trace();
         [[nodiscard]] Matrix<K> transpose();
         [[nodiscard]] Matrix<K> row_echelon();
 
@@ -272,6 +275,17 @@ void Matrix<K>::divide_line(K scale, unsigned line) {
 }
 
 template<class K>
+void Matrix<K>::swap_line(unsigned line_one, unsigned line_two) {
+    if (line_one != line_two) {
+        for (int column_swap = 1; column_swap <= this->column; ++column_swap) {
+            K buffer = this->get(line_one, column_swap);
+            this->set(line_one, column_swap, this->get(line_two, column_swap));
+            this->set(line_two, column_swap, buffer);
+        }
+    }
+}
+
+template<class K>
 void Matrix<K>::add(Matrix<K> const matrix) {
     if (matrix.line == this->line && matrix.column == this->column) {
         for (int line_add = 0; line_add < line; ++line_add) {
@@ -366,10 +380,12 @@ Matrix<K> Matrix<K>::transpose() {
 
 template<class K>
 Matrix<K> Matrix<K>::row_echelon() {
-    Matrix<K> result(this->line, this->column);
+    Matrix<K> result(*this);
 
-    for (int line_matrix = 0; line_matrix < this->get_line(); ++line_matrix) {
+    unsigned lead = 0;
 
+    for (int line_matrix = 1; line_matrix <= this->get_line(); ++line_matrix) {
+        result.divide_line(result.get(line_matrix, 1), line_matrix);
     }
 
     return result;
