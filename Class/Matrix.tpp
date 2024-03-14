@@ -33,6 +33,7 @@ class Matrix {
         void scale(K scale);
         K trace();
         [[nodiscard]] Matrix<K> transpose();
+        [[nodiscard]] Matrix<K> row_echelon();
 
         [[nodiscard]] unsigned get_line() const;
         [[nodiscard]] unsigned get_column() const;
@@ -292,6 +293,17 @@ Matrix<K> Matrix<K>::transpose() {
         for (int transpose_column = 1; transpose_column <= this->get_line(); ++transpose_column) {
             result.set(transpose_line, transpose_column, this->get(transpose_column, transpose_line));
         }
+    }
+
+    return result;
+}
+
+template<class K>
+Matrix<K> Matrix<K>::row_echelon() {
+    Matrix<K> result(this->line, this->column);
+
+    for (int line_matrix = 0; line_matrix < this->get_line(); ++line_matrix) {
+
     }
 
     return result;
