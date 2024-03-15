@@ -444,8 +444,7 @@ Matrix<K> Matrix<K>::operator-(Matrix<K> const &matrix) {
 template<class K>
 Matrix<K> Matrix<K>::operator*(Matrix<K> const &matrix) {
     Matrix<K> result(*this);
-    result.multiply(matrix);
-    return result;
+    return result.multiply(matrix);
 }
 
 template<class K>
