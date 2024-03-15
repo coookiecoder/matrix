@@ -382,10 +382,12 @@ template<class K>
 Matrix<K> Matrix<K>::row_echelon() {
     Matrix<K> result(*this);
 
-    unsigned lead = 0;
-
     for (int line_matrix = 1; line_matrix <= this->get_line(); ++line_matrix) {
-        result.divide_line(result.get(line_matrix, 1), line_matrix);
+        unsigned lead = 1;
+        while(result.get(line_matrix, lead) == 0 && lead <= result.get_column()) {
+            lead++;
+        }
+        result.divide_line(result.get(line_matrix, lead), line_matrix);
     }
 
     return result;
