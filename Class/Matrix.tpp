@@ -53,6 +53,8 @@ class Matrix {
 
         [[nodiscard]] bool is_square() const;
         [[nodiscard]] bool is_vector() const;
+        [[nodiscard]] bool is_nonzero(unsigned line_find) const;
+        [[nodiscard]] bool is_row_echelon() const;
 
         virtual void print();
 
@@ -382,12 +384,16 @@ template<class K>
 Matrix<K> Matrix<K>::row_echelon() {
     Matrix<K> result(*this);
 
-    for (int line_matrix = 1; line_matrix <= this->get_line(); ++line_matrix) {
-        unsigned lead = 1;
-        while(result.get(line_matrix, lead) == 0 && lead <= result.get_column()) {
-            lead++;
+    if (result.is_row_echelon()) {
+        return result;
+    }
+
+    for (int column_find = 1; column_find < this->get_column(); ++column_find) {
+        for (int line_find = 1; line_find <= this->get_line(); ++line_find) {
+            if (this->get(line_find, column_find) != 0) {
+                this->swap_line(line_find, 1);
+            }
         }
-        result.divide_line(result.get(line_matrix, lead), line_matrix);
     }
 
     return result;
@@ -413,6 +419,48 @@ bool Matrix<K>::is_square() const {
 template<class K>
 bool Matrix<K>::is_vector() const {
     return this->vector;
+}
+
+template<class K>
+bool Matrix<K>::is_nonzero(unsigned line_find) const {
+    for (int column_find = 1; column_find <= this->column; ++column_find) {
+        if (this->get(line_find, column_find) == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template<class K>
+bool Matrix<K>::is_row_echelon() const {
+    unsigned old_pivot = 1;
+
+    for (int line_find = 1; line_find <= this->get_line(); ++line_find) {
+        unsigned pivot = 1;
+
+        if (line_find == 1) {
+            while (pivot <= this->get_column() && this->get(line_find, pivot) == 0) {
+                pivot++;
+            }
+            if (pivot <= this->get_column() && this->get(line_find, pivot) == 1) {
+                old_pivot = pivot;
+            } else {
+                return false;
+            }
+        } else {
+            while (pivot <= this->get_column() && this->get(line_find, pivot) == 0) {
+                pivot++;
+            }
+            if (pivot <= this->get_column() && this->get(line_find, pivot) == 1 && pivot > old_pivot) {
+                old_pivot = pivot;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    return true;
+
 }
 
 template<class K>
