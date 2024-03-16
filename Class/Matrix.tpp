@@ -37,6 +37,11 @@ class Matrix {
         void multiply_line(K scale, unsigned line);
         void divide_line(K scale, unsigned line);
 
+        void add_line(Matrix<K> matrix, K scale, unsigned line);
+        void subtract_line(Matrix<K> matrix, K scale, unsigned line);
+        void multiply_line(Matrix<K> matrix, K scale, unsigned line);
+        void divide_line(Matrix<K>, K scale, unsigned line);
+
         void swap_line(unsigned line_one, unsigned line_two);
 
         void add(Matrix<K> matrix);
@@ -277,6 +282,34 @@ void Matrix<K>::divide_line(K scale, unsigned line) {
 }
 
 template<class K>
+void Matrix<K>::add_line(Matrix<K> matrix, K scale, unsigned line) {
+    for (int column_add = 1; column_add <= this->get_column(); ++column_add) {
+        this->set(line, column_add, this->get(line, column_add) + scale * matrix.get(line, column_add));
+    }
+}
+
+template<class K>
+void Matrix<K>::subtract_line(Matrix<K> matrix, K scale, unsigned line) {
+    for (int column_subtract = 1; column_subtract <= this->get_column(); ++column_subtract) {
+        this->set(line, column_subtract, this->get(line, column_subtract) - scale * matrix.get(line, column_subtract));
+    }
+}
+
+template<class K>
+void Matrix<K>::multiply_line(Matrix<K> matrix, K scale, unsigned line) {
+    for (int column_multiply = 1; column_multiply <= this->get_column(); ++column_multiply) {
+        this->set(line, column_multiply, this->get(line, column_multiply) * (scale * matrix.get(line, column_multiply)));
+    }
+}
+
+template<class K>
+void Matrix<K>::divide_line(Matrix<K> matrix, K scale, unsigned line) {
+    for (int column_divide = 1; column_divide <= this->get_column(); ++column_divide) {
+        this->set(line, column_divide, this->get(line, column_divide) / (scale  * matrix.get(line, column_divide)));
+    }
+}
+
+template<class K>
 void Matrix<K>::swap_line(unsigned line_one, unsigned line_two) {
     if (line_one != line_two) {
         for (int column_swap = 1; column_swap <= this->column; ++column_swap) {
@@ -392,6 +425,10 @@ Matrix<K> Matrix<K>::row_echelon() {
         for (int line_find = 1; line_find <= this->get_line(); ++line_find) {
             if (this->get(line_find, column_find) != 0) {
                 this->swap_line(line_find, 1);
+
+                for (int line_pivot = 2; line_pivot <= this->get_line(); ++line_pivot) {
+
+                }
             }
         }
     }
