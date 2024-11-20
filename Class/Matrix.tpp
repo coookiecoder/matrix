@@ -42,6 +42,11 @@ class Matrix {
         void multiply_line(Matrix<K> matrix, K scale, unsigned line, unsigned line_matrix);
         void divide_line(Matrix<K>, K scale, unsigned line, unsigned line_matrix);
 
+		void add_line_by_line(unsigned line_one, unsigned line_two, K scale);
+		void subtract_line_by_line(unsigned line_one, unsigned line_two, K scale);
+		void multiply_line_by_line(unsigned line_one, unsigned line_two, K scale);
+		void divide_line_by_line(unsigned line_one, unsigned line_two, K scale);
+
         void swap_line(unsigned line_one, unsigned line_two);
 
         void add(Matrix<K> matrix);
@@ -310,6 +315,34 @@ void Matrix<K>::divide_line(Matrix<K> matrix, K scale, unsigned line, unsigned l
 }
 
 template<class K>
+void Matrix<K>::add_line_by_line(unsigned line_one, unsigned line_two, K scale) {
+	for (int column_add = 1; column_add <= this->get_column(); ++column_add) {
+		this->set(line_one, column_add, this->get(line_one, column_add) + this->get(line_two, column_add) * scale);
+	}
+}
+
+template<class K>
+void Matrix<K>::subtract_line_by_line(unsigned line_one, unsigned line_two, K scale) {
+	for (int column_subtract = 1; column_subtract <= this->get_column(); ++column_subtract) {
+		this->set(line_one, column_subtract, this->get(line_one, column_subtract) - this->get(line_two, column_subtract) * scale);
+	}
+}
+
+template<class K>
+void Matrix<K>::multiply_line_by_line(unsigned line_one, unsigned line_two, K scale) {
+	for (int column_multiply = 1; column_multiply <= this->get_column(); ++column_multiply) {
+		this->set(line_one, column_multiply, this->get(line_one, column_multiply) * (this->get(line_two, column_multiply) * scale));
+	}
+}
+template<class K>
+void Matrix<K>::divide_line_by_line(unsigned line_one, unsigned line_two, K scale) {
+	for (int column_divide = 1; column_divide <= this->get_column(); ++column_divide) {
+		this->set(line_one, column_divide, this->get(line_one, column_divide) / (this->get(line_two, column_divide) * scale));
+	}
+}
+
+
+template<class K>
 void Matrix<K>::swap_line(unsigned line_one, unsigned line_two) {
     if (line_one != line_two) {
         for (int column_swap = 1; column_swap <= this->column; ++column_swap) {
@@ -413,28 +446,48 @@ Matrix<K> Matrix<K>::transpose() {
     return result;
 }
 
-template<class K>
-Matrix<K> Matrix<K>::row_echelon() {
-    Matrix<K> result(*this);
+template <class K>
+Matrix<K> Matrix<K>::row_echelon()
+{
+	Matrix<K> result(*this);
+	int column_pivot = 0;
+	int row_pivot = 0;
 
-    if (result.is_row_echelon()) {
-        return result;
-    }
+	for (int current_column = 1; current_column <= result.get_column(); current_column++) {
+		for (int current_row = 1; current_row <= result.get_line(); current_row++) {
+			if (result.get(current_row, current_column)) {
+				column_pivot = current_column;
+				row_pivot = current_row;
+				break ;
+			}
+		}
+		if (result.get(row_pivot, current_column))
+			break ;
+	}
 
-    for (int column_find = 1; column_find < this->get_column(); ++column_find) {
-        for (int line_find = 1; line_find <= this->get_line(); ++line_find) {
-            if (this->get(line_find, column_find) != 0) {
-                this->swap_line(line_find, 1);
+	if (row_pivot != 1)
+		result.swap_line(1, row_pivot);
 
-                for (int line_pivot = 2; line_pivot <= this->get_line(); ++line_pivot) {
-                    result.subtract_line(result, 1 / (result.get(1, column_find) / result.get(line_pivot, column_find)), line_pivot, line_find);
-                }
-            }
-        }
-    }
+	for (row_pivot = 1; row_pivot <= result.get_line(); row_pivot++) {
+		for (int current_row = row_pivot + 1; current_row <= result.get_line(); current_row++) {
+			if (result.get(current_row, column_pivot)) {
+				result.subtract_line_by_line(current_row, row_pivot, result.get(current_row, column_pivot) / result.get(row_pivot, column_pivot));
+				result.set(current_row, column_pivot, 0);
+			}
+		}
+		std::cout << result << std::endl;
+		for (int current_column = column_pivot; current_column <= result.get_column(); current_column++) {
+			if (row_pivot + 1 < result.get_line() && result.get(row_pivot + 1, current_column)) {
+				column_pivot = current_column;
+				break ;
+			}
+		}
+	}
 
-    return result;
+	return (result);
 }
+
+
 
 template<class K>
 unsigned Matrix<K>::get_line() const {
@@ -466,38 +519,6 @@ bool Matrix<K>::is_nonzero(unsigned line_find) const {
         }
     }
     return true;
-}
-
-template<class K>
-bool Matrix<K>::is_row_echelon() const {
-    unsigned old_pivot = 1;
-
-    for (int line_find = 1; line_find <= this->get_line(); ++line_find) {
-        unsigned pivot = 1;
-
-        if (line_find == 1) {
-            while (pivot <= this->get_column() && this->get(line_find, pivot) == 0) {
-                pivot++;
-            }
-            if (pivot <= this->get_column() && this->get(line_find, pivot) == 1) {
-                old_pivot = pivot;
-            } else {
-                return false;
-            }
-        } else {
-            while (pivot <= this->get_column() && this->get(line_find, pivot) == 0) {
-                pivot++;
-            }
-            if (pivot <= this->get_column() && this->get(line_find, pivot) == 1 && pivot > old_pivot) {
-                old_pivot = pivot;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    return true;
-
 }
 
 template<class K>
