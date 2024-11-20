@@ -57,6 +57,7 @@ class Matrix {
         [[nodiscard]] K trace();
         [[nodiscard]] Matrix<K> transpose();
         [[nodiscard]] Matrix<K> row_echelon();
+		[[nodiscard]] K determinant();
 
         [[nodiscard]] unsigned get_line() const;
         [[nodiscard]] unsigned get_column() const;
@@ -64,7 +65,6 @@ class Matrix {
         [[nodiscard]] bool is_square() const;
         [[nodiscard]] bool is_vector() const;
         [[nodiscard]] bool is_nonzero(unsigned line_find) const;
-        [[nodiscard]] bool is_row_echelon() const;
 
         virtual void print();
 
@@ -487,6 +487,49 @@ Matrix<K> Matrix<K>::row_echelon()
 	return (result);
 }
 
+template <class K>
+K Matrix<K>::determinant() {
+	if (!this->is_square()) {
+		throw std::invalid_argument("The matrix must be square.");
+	}
+
+	int n = this->line;
+	Matrix<K> LU(*this); // Make a copy of the matrix
+
+	K det = 1;
+	for (int i = 0; i < n; ++i) {
+		// Find pivot
+		K pivot = LU.get(i + 1, i + 1);
+		if (pivot == 0) {
+			// Try to pivot with a row below
+			bool pivot_found = false;
+			for (int j = i + 1; j < n; ++j) {
+				if (LU.get(j + 1, i + 1) != 0) {
+					LU.swap_line(i + 1, j + 1);
+					pivot = LU.get(i + 1, i + 1);
+					det = -det;
+					pivot_found = true;
+					break;
+				}
+			}
+			if (!pivot_found) {
+				return 0; // Matrix is singular
+			}
+		}
+
+		// Lu decomposition process
+		for (int j = i + 1; j < n; ++j) {
+			K factor = LU.get(j + 1, i + 1) / pivot;
+			for (int k = i + 1; k < n; ++k) {
+				K val = LU.get(j + 1, k + 1) - factor * LU.get(i + 1, k + 1);
+				LU.set(j + 1, k + 1, val);
+			}
+		}
+		det *= pivot;
+	}
+
+	return det;
+}
 
 
 template<class K>
