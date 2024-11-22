@@ -58,6 +58,7 @@ class Matrix {
         [[nodiscard]] Matrix<K> transpose();
         [[nodiscard]] Matrix<K> row_echelon();
 		[[nodiscard]] K determinant();
+		[[nodiscard]] Matrix<K> inverse();
 
         [[nodiscard]] unsigned get_line() const;
         [[nodiscard]] unsigned get_column() const;
@@ -65,6 +66,7 @@ class Matrix {
         [[nodiscard]] bool is_square() const;
         [[nodiscard]] bool is_vector() const;
         [[nodiscard]] bool is_nonzero(unsigned line_find) const;
+		[[nodiscard]] bool is_identity() const;
 
         virtual void print();
 
@@ -531,6 +533,72 @@ K Matrix<K>::determinant() {
 	return det;
 }
 
+template <class K>
+Matrix<K> Matrix<K>::inverse()
+{
+	if (this->is_square() == 0)
+		throw std::invalid_argument("The matrix must be square");
+	if (this->determinant() == 0)
+		throw std::invalid_argument("The matrix must have a non null determinant.");
+
+    unsigned n = line;  // Since the matrix is square, number of rows = number of columns
+    Matrix<K> augmented(n, 2 * n);  // Create an augmented matrix [A | I]
+
+    // Initialize the augmented matrix: [A | I]
+    for (unsigned i = 0; i < n; ++i) {
+        for (unsigned j = 0; j < n; ++j) {
+            augmented.set(i + 1, j + 1, this->get(i + 1, j + 1));  // Copy A into the left part
+            augmented.set(i + 1, j + 1 + n, (i == j) ? 1 : 0);  // Set the identity matrix on the right
+        }
+    }
+
+    // Perform Gaussian elimination
+    for (unsigned i = 0; i < n; ++i) {
+        // Find the pivot row
+        unsigned pivot_row = i;
+        for (unsigned j = i + 1; j < n; ++j) {
+            if (augmented.get(j + 1, i + 1) > augmented.get(pivot_row + 1, i + 1)) {
+                pivot_row = j;
+            }
+        }
+
+        // Swap the current row with the pivot row
+        if (pivot_row != i) {
+            augmented.swap_line(i + 1, pivot_row + 1);
+        }
+
+        // Make the pivot element 1 by scaling the row
+        K pivot = augmented.get(i + 1, i + 1);
+        if (pivot == 0) {
+            throw std::runtime_error("Matrix is singular and cannot be inverted.");
+        }
+
+        // Scale the row so the pivot becomes 1
+        for (unsigned j = 0; j < 2 * n; ++j) {
+            augmented.set(i + 1, j + 1, augmented.get(i + 1, j + 1) / pivot);
+        }
+
+        // Eliminate the other elements in the current column
+        for (unsigned j = 0; j < n; ++j) {
+            if (i != j) {
+                K scale = augmented.get(j + 1, i + 1);
+                for (unsigned k = 0; k < 2 * n; ++k) {
+                    augmented.set(j + 1, k + 1, augmented.get(j + 1, k + 1) - scale * augmented.get(i + 1, k + 1));
+                }
+            }
+        }
+    }
+
+    // Extract the inverse matrix from the augmented matrix
+    Matrix<K> inverse(n, n);
+    for (unsigned i = 0; i < n; ++i) {
+        for (unsigned j = 0; j < n; ++j) {
+            inverse.set(i + 1, j + 1, augmented.get(i + 1, j + 1 + n));
+        }
+    }
+
+    return inverse;
+}
 
 template<class K>
 unsigned Matrix<K>::get_line() const {
@@ -563,6 +631,17 @@ bool Matrix<K>::is_nonzero(unsigned line_find) const {
     }
     return true;
 }
+
+template<class K>
+bool Matrix<K>::is_identity() const {
+	for (int current_diagonal = 1; current_diagonal <= this->line; ++current_diagonal) {
+		if (this->get(current_diagonal, current_diagonal) != 1) {
+			return false;
+		}
+	}
+	return true;
+}
+
 
 template<class K>
 void Matrix<K>::print() {
