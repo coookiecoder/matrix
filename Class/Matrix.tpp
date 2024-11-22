@@ -59,6 +59,7 @@ class Matrix {
         [[nodiscard]] Matrix<K> row_echelon();
 		[[nodiscard]] K determinant();
 		[[nodiscard]] Matrix<K> inverse();
+		unsigned rank();
 
         [[nodiscard]] unsigned get_line() const;
         [[nodiscard]] unsigned get_column() const;
@@ -598,6 +599,59 @@ Matrix<K> Matrix<K>::inverse()
     }
 
     return inverse;
+}
+
+template<class K>
+unsigned Matrix<K>::rank() {
+    unsigned n = line;  // Number of rows
+    unsigned m = column; // Number of columns
+
+    Matrix<K> augmented(*this);  // Create a copy of the matrix for row reduction
+
+    unsigned rank = 0;  // This will hold the rank of the matrix
+
+    for (unsigned i = 0; i < n; ++i) {
+        // Find the pivot column for the current row
+        unsigned pivot_column = i;
+        bool found_pivot = false;
+
+        for (unsigned j = i; j < m; ++j) {
+            if (augmented.get(i + 1, j + 1) != 0) {
+                pivot_column = j;
+                found_pivot = true;
+                break;
+            }
+        }
+
+        // If no pivot is found, this row is a zero row and can be ignored
+        if (!found_pivot) {
+            continue;
+        }
+
+        // Swap the current row with the row that contains the pivot
+        if (pivot_column != i) {
+            augmented.swap_line(i + 1, pivot_column + 1);
+        }
+
+        // Scale the pivot row to make the pivot element 1
+        K pivot = augmented.get(i + 1, i + 1);
+        for (unsigned j = 0; j < m; ++j) {
+            augmented.set(i + 1, j + 1, augmented.get(i + 1, j + 1) / pivot);
+        }
+
+        // Eliminate the current column in all rows below the pivot
+        for (unsigned j = i + 1; j < n; ++j) {
+            K scale = augmented.get(j + 1, i + 1);
+            for (unsigned k = 0; k < m; ++k) {
+                augmented.set(j + 1, k + 1, augmented.get(j + 1, k + 1) - scale * augmented.get(i + 1, k + 1));
+            }
+        }
+
+        // Increment the rank, as we have found a non-zero row
+        ++rank;
+    }
+
+    return rank;
 }
 
 template<class K>
