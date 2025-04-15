@@ -478,7 +478,7 @@ Matrix<K> Matrix<K>::row_echelon()
 				result.set(current_row, column_pivot, 0);
 			}
 		}
-		std::cout << result << std::endl;
+
 		for (int current_column = column_pivot; current_column <= result.get_column(); current_column++) {
 			if (row_pivot + 1 < result.get_line() && result.get(row_pivot + 1, current_column)) {
 				column_pivot = current_column;
