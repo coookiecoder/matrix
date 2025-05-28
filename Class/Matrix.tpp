@@ -93,12 +93,15 @@ std::ostream &operator<<(std::ostream &output, Matrix<K> const &input) {
                 output << std::setw(10) << (input.get(line_print + 1, column_print + 1));
             }
         }
-        output << "]" << std::endl;
+        if (line_print != input.get_line() - 1) {
+            output << "]" << std::endl;
+        } else {
+            output << "]";
+        }
     }
     if (input.get_line() == 0 && input.get_column() == 0) {
         output << "empty matrix" << std::endl;
     }
-    output << std::endl;
     return output;
 }
 
