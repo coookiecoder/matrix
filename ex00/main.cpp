@@ -1,177 +1,172 @@
 #include <Matrix.tpp>
 
-auto main(int argc, char **argv) -> int {
-    if (argc == 2 || argc == 4) {
-        Vector<int> vector_result;
+auto main() -> int {
+    {
+        std::cout << "vector addition" << std::endl;
 
-        std::cout << "Vector A && B, add" << std::endl << std::endl;
+        Vector<float> vector_a(2, {0, 0});
+        Vector<float> vector_b(2, {0, 0});
 
-        Vector vector_a(5, {1, 2, 3, 4, 5});
-        Vector vector_b(5, {1, 2, 3, 4, 5});
+        std::cout << vector_a + vector_b << std::endl;
 
-        vector_result = vector_a + vector_b;
+        vector_a = Vector<float>(2, {1, 0});
+        vector_b = Vector<float>(2, {0, 1});
 
-        vector_result.print();
+        std::cout << vector_a + vector_b << std::endl;
 
-        vector_result = add(vector_a, vector_b);
+        vector_a = Vector<float>(2, {1, 1});
+        vector_b = Vector<float>(2, {1, 1});
 
-        vector_result.print();
+        std::cout << vector_a + vector_b << std::endl;
 
-        vector_a.add(vector_b);
+        vector_a = Vector<float>(2, {21, 21});
+        vector_b = Vector<float>(2, {21, 21});
 
-        vector_a.print();
+        std::cout << vector_a + vector_b << std::endl;
 
-        vector_b.add(vector_a);
+        vector_a = Vector<float>(2, {-21, 21});
+        vector_b = Vector<float>(2, {21, -21});
 
-        vector_b.print();
+        std::cout << vector_a + vector_b << std::endl;
 
-        std::cout << "Vector C && D, subtract" << std::endl << std::endl;
+        vector_a = Vector<float>(10, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+        vector_b = Vector<float>(10, {9, 8, 7, 6, 5, 4, 3, 2, 1, 0});
 
-        Vector vector_c(5, {1, 2, 3, 4, 5});
-        Vector vector_d(5, {1, 2, 3, 4, 5});
-
-        vector_result = vector_c - vector_d;
-
-        vector_result.print();
-
-        vector_result = subtract(vector_c, vector_d);
-
-        vector_result.print();
-
-        vector_c.subtract(vector_d);
-
-        vector_c.print();
-
-        vector_d.subtract(vector_c);
-
-        vector_d.print();
-
-        std::cout << "Vector E, scale && dot product" << std::endl << std::endl;
-
-        Vector vector_e(5, {1, 2, 3, 4, 5});
-
-        vector_e.scale(3);
-
-        vector_e.print();
-
-        std::cout << vector_e.dotProduct(vector_e) << std::endl << std::endl;
-
-        std::cout << "Vector F, error" << std::endl << std::endl;
-
-        Vector vector_f(6, {1, 2, 3, 4, 5});
-
-        vector_result = vector_e - vector_f;
-
-        vector_result.print();
-
-        vector_result = vector_e + vector_f;
-
-        vector_result.print();
-
-        vector_f = Vector<int>();
-
-        vector_f.print();
+        std::cout << vector_a + vector_b << std::endl;
     }
 
-    if (argc == 3 || argc == 4) {
-        std::cout << "Matrix time" << std::endl << std::endl;
+    {
+        std::cout << "matrix addition" << std::endl;
 
-        Matrix<int> matrix_result;
+        Matrix<float> matrix_a(2, 2, {0, 0, 0, 0});
+        Matrix<float> matrix_b(2, 2, {0, 0, 0, 0});
 
-        std::cout << "Matrix A && B, add" << std::endl << std::endl;
+        std::cout << matrix_a + matrix_b << std::endl;
 
-        Matrix matrix_a(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
-        Matrix matrix_b(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
+        matrix_a = Matrix<float>(2, 2, {0, 0, 0, 0});
+        matrix_b = Matrix<float>(2, 2, {1, 0, 0, 1});
 
-        matrix_result = matrix_a + matrix_b;
+        std::cout << matrix_a + matrix_b << std::endl;
 
-        matrix_result.print();
+        matrix_a = Matrix<float>(2, 2, {1, 1, 1, 1});
+        matrix_b = Matrix<float>(2, 2, {1, 1, 1, 1});
 
-        matrix_result = add(matrix_a, matrix_b);
+        std::cout << matrix_a + matrix_b << std::endl;
 
-        matrix_result.print();
+        matrix_a = Matrix<float>(2, 2, {21, 21, 21, 21});
+        matrix_b = Matrix<float>(2, 2, {21, 21, 21, 21});
 
-        std::cout << "Matrix C && D, subtract" << std::endl << std::endl;
-
-        Matrix matrix_c(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
-        Matrix matrix_d(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
-
-        matrix_result = matrix_c - matrix_d;
-
-        matrix_result.print();
-
-        matrix_result = subtract(matrix_c, matrix_d);
-
-        matrix_result.print();
-
-        std::cout << "Matrix E, scale" << std::endl << std::endl;
-
-        Matrix matrix_e(5, 5, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
-
-        matrix_e.scale(3);
-
-        matrix_e.print();
-
-        std::cout << "Matrix F, error" << std::endl << std::endl;
-
-        Matrix matrix_f(4, 4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
-
-        matrix_result = matrix_e - matrix_f;
-
-        matrix_result.print();
-
-        matrix_result = matrix_e + matrix_f;
-
-        matrix_result.print();
-
-        matrix_f = Matrix<int>();
-
-        matrix_f.print();
+        std::cout << matrix_a + matrix_b << std::endl;
     }
 
-    if (argc == 4) {
-        std::cout << "Conversion time" << std::endl << std::endl;
+    {
+        std::cout << "vector substraction" << std::endl;
 
-        Matrix matrix_g(4, 4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+        Vector<float> vector_a(2, {0, 0});
+        Vector<float> vector_b(2, {0, 0});
 
-        std::cout << "Matrix G" << std::endl << std::endl;
+        std::cout << vector_a - vector_b << std::endl;
 
-        matrix_g.print();
+        vector_a = Vector<float>(2, {1, 0});
+        vector_b = Vector<float>(2, {0, 1});
 
-        matrix_g.matrix_to_vector();
+        std::cout << vector_a - vector_b << std::endl;
 
-        matrix_g.print();
+        vector_a = Vector<float>(2, {1, 1});
+        vector_b = Vector<float>(2, {1, 1});
 
-        matrix_g.vector_to_matrix();
+        std::cout << vector_a - vector_b << std::endl;
 
-        matrix_g.print();
+        vector_a = Vector<float>(2, {21, 21});
+        vector_b = Vector<float>(2, {21, 21});
 
-        Vector vector_g(4, {1, 2, 3, 4});
+        std::cout << vector_a - vector_b << std::endl;
 
-        std::cout << "Vector G" << std::endl << std::endl;
+        vector_a = Vector<float>(2, {-21, 21});
+        vector_b = Vector<float>(2, {21, -21});
 
-        vector_g.print();
+        std::cout << vector_a - vector_b << std::endl;
 
-        vector_g.vector_to_matrix();
+        vector_a = Vector<float>(10, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+        vector_b = Vector<float>(10, {9, 8, 7, 6, 5, 4, 3, 2, 1, 0});
 
-        vector_g.print();
+        std::cout << vector_a - vector_b << std::endl;
+    }
 
-        vector_g.matrix_to_vector();
+    {
+        std::cout << "matrix substraction" << std::endl;
 
-        vector_g.print();
+        Matrix<float> matrix_a(2, 2, {0, 0, 0, 0});
+        Matrix<float> matrix_b(2, 2, {0, 0, 0, 0});
 
-        std::cout << "Matrix && Vector H && I" << std::endl << std::endl;
+        std::cout << matrix_a - matrix_b << std::endl;
 
-        Vector vector_h(matrix_g);
-        Matrix matrix_h(vector_g);
+        matrix_a = Matrix<float>(2, 2, {0, 0, 0, 0});
+        matrix_b = Matrix<float>(2, 2, {1, 0, 0, 1});
 
-        vector_h.print();
-        matrix_h.print();
+        std::cout << matrix_a - matrix_b << std::endl;
 
-        Vector<int> vector_i(10);
-        Matrix<int> matrix_i(10, 10);
+        matrix_a = Matrix<float>(2, 2, {1, 1, 1, 1});
+        matrix_b = Matrix<float>(2, 2, {1, 1, 1, 1});
 
-        vector_i.print();
-        matrix_i.print();
+        std::cout << matrix_a - matrix_b << std::endl;
+
+        matrix_a = Matrix<float>(2, 2, {21, 21, 21, 21});
+        matrix_b = Matrix<float>(2, 2, {21, 21, 21, 21});
+
+        std::cout << matrix_a - matrix_b << std::endl;
+    }
+
+    {
+        std::cout << "vector scale" << std::endl;
+
+        Vector<float> vector_a(2, {0, 0});
+        vector_a.scale(1);
+
+        std::cout << vector_a << std::endl;
+
+        vector_a = Vector<float>(2, {1, 0});
+        vector_a.scale(1);
+
+        std::cout << vector_a << std::endl;
+
+        vector_a = Vector<float>(2, {1, 1});
+        vector_a.scale(2);
+
+        std::cout << vector_a << std::endl;
+
+        vector_a = Vector<float>(2, {21, 21});
+        vector_a.scale(2);
+
+        std::cout << vector_a << std::endl;
+
+        vector_a = Vector<float>(2, {42, 42});
+        vector_a.scale(0.5);
+
+        std::cout << vector_a << std::endl;
+    }
+
+    {
+        std::cout << "matrix scale" << std::endl;
+
+        Matrix<float> matrix_a(2, 2, {0, 0, 0, 0});
+        matrix_a.scale(0);
+
+        std::cout << matrix_a  << std::endl;
+
+        matrix_a = Matrix<float>(2, 2, {1, 0, 0, 1});
+        matrix_a.scale(1);
+
+        std::cout << matrix_a  << std::endl;
+
+        matrix_a = Matrix<float>(2, 2, {1, 1, 1, 1});
+        matrix_a.scale(2);
+
+        std::cout << matrix_a  << std::endl;
+
+        matrix_a = Matrix<float>(2, 2, {21, 21, 21, 21});
+        matrix_a.scale(0.5);
+
+        std::cout << matrix_a  << std::endl;
     }
 }
