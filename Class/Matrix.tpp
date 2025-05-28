@@ -393,26 +393,47 @@ void Matrix<K>::subtract(Matrix const matrix) {
 
 template<class K>
 Matrix<K> Matrix<K>::multiply(Matrix const matrix) {
-    if (this->line == matrix.column && this->column == matrix.line) {
-        Matrix<K> result(this->line, matrix.column);
+    if (matrix.is_vector() == false) {
+        if (this->line == matrix.column && this->column == matrix.line) {
+            Matrix<K> result(this->line, matrix.column);
 
-        for (int line_multiply= 0; line_multiply < result.line; ++line_multiply) {
-            for (int column_multiply = 0; column_multiply < result.column; ++column_multiply) {
-                K buffer = K();
-                for (int cursor = 0; cursor < this->column; ++cursor) {
-                    buffer = std::fma(this->data[line_multiply][cursor], matrix.data[cursor][column_multiply], buffer);
+            for (int line_multiply= 0; line_multiply < result.line; ++line_multiply) {
+                for (int column_multiply = 0; column_multiply < result.column; ++column_multiply) {
+                    K buffer = K();
+                    for (int cursor = 0; cursor < this->column; ++cursor) {
+                        buffer = std::fma(this->data[line_multiply][cursor], matrix.data[cursor][column_multiply], buffer);
+                    }
+                    result.set(line_multiply + 1, column_multiply + 1, buffer);
                 }
-                result.set(line_multiply + 1, column_multiply + 1, buffer);
             }
+            return result;
+        } else {
+            std::cout << "incompatible matrix" << std::endl;
+            std::cout << matrix << std::endl;
+            std::cout << "and" << std::endl;
+            std::cout << *this << std::endl;
+            Matrix<K> result;
+            return result;
         }
-        return result;
     } else {
-        std::cout << "incompatible matrix" << std::endl;
-        std::cout << matrix;
-        std::cout << "and" << std::endl;
-        std::cout << *this;
-        Matrix<K> result;
-        return result;
+        if (this->column == matrix.line) {
+            Matrix<K> result(this->line, 1);
+
+            for (int i = 0; i < this->line; ++i) {
+                K buffer = K();
+                for (int j = 0; j < this->column; ++j) {
+                    buffer = std::fma(this->data[i][j], matrix.data[j][0], buffer);
+                }
+                result.set(i + 1, 1, buffer);
+            }
+            return result;
+        } else {
+            std::cout << "incompatible matrix (vector case)" << std::endl;
+            std::cout << matrix << std::endl;
+            std::cout << "and" << std::endl;
+            std::cout << *this << std::endl;
+            return Matrix<K>(); // return empty matrix
+        }
     }
 }
 
