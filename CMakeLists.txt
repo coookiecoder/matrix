@@ -1,58 +1,25 @@
 cmake_minimum_required(VERSION 3.22)
 set(CMAKE_CXX_STANDARD 23)
 
-project(ex00)
-add_executable(ex00_matrix ex00/main.cpp Class/Matrix.tpp)
-include_directories(Class)
+project(matrix)
 
-project(ex01)
-add_executable(ex01_matrix ex01/main.cpp Class/Matrix.tpp)
-include_directories(Class)
+macro(add_matrix_ex name)
+    add_executable(${name}_matrix ${name}/main.cpp Class/Matrix.tpp)
+    add_test(NAME ${name}_test COMMAND ${name}_matrix)
+endmacro()
 
-project(ex02)
-add_executable(ex02_matrix ex02/main.cpp Class/Matrix.tpp)
-include_directories(Class)
-
-project(ex03)
-add_executable(ex03_matrix ex03/main.cpp Class/Matrix.tpp)
-include_directories(Class)
-
-project(ex04)
-add_executable(ex04_matrix ex04/main.cpp Class/Matrix.tpp)
-include_directories(Class)
-
-project(ex05)
-add_executable(ex05_matrix ex05/main.cpp Class/Matrix.tpp)
-include_directories(Class)
-
-project(ex06)
-add_executable(ex06_matrix ex06/main.cpp Class/Matrix.tpp)
-include_directories(Class)
-
-project(ex07)
-add_executable(ex07_matrix ex07/main.cpp Class/Matrix.tpp)
-include_directories(Class)
-
-project(ex08)
-add_executable(ex08_matrix ex08/main.cpp Class/Matrix.tpp)
-include_directories(Class)
-
-project(ex09)
-add_executable(ex09_matrix ex09/main.cpp Class/Matrix.tpp)
-include_directories(Class)
-
-project(ex10)
-add_executable(ex10_matrix ex10/main.cpp Class/Matrix.tpp)
-include_directories(Class)
-
-project(ex11)
-add_executable(ex11_matrix ex11/main.cpp Class/Matrix.tpp)
-include_directories(Class)
-
-project(ex12)
-add_executable(ex12_matrix ex12/main.cpp Class/Matrix.tpp)
-include_directories(Class)
-
-project(ex13)
-add_executable(ex13_matrix ex13/main.cpp Class/Matrix.tpp)
-include_directories(Class)
+# Add each exercise as a test
+add_matrix_ex(ex00)
+add_matrix_ex(ex01)
+add_matrix_ex(ex02)
+add_matrix_ex(ex03)
+add_matrix_ex(ex04)
+add_matrix_ex(ex05)
+add_matrix_ex(ex06)
+add_matrix_ex(ex07)
+add_matrix_ex(ex08)
+add_matrix_ex(ex09)
+add_matrix_ex(ex10)
+add_matrix_ex(ex11)
+add_matrix_ex(ex12)
+add_matrix_ex(ex13)
