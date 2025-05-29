@@ -8,6 +8,8 @@ macro(add_matrix_ex name)
     add_test(NAME ${name}_test COMMAND ${name}_matrix)
 endmacro()
 
+include_directories(Class)
+
 # Add each exercise as a test
 add_matrix_ex(ex00)
 add_matrix_ex(ex01)
